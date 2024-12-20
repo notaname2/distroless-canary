@@ -30,6 +30,10 @@ RUN CGO_ENABLED=0 go build \
 	-installsuffix 'static' \
 	-o /canary ./canary
 
+RUN mkdir bin && cp /canary ./bin/sh 
+WORKDIR bin
+RUN ln -s sh dash && ln -s sh rsh && ln -s sh bash && ln -s sh rbash && ln -s csh && ln -s sh static-sh && ln -s zsh 
+
 # STAGE 2: build the container to run
 FROM gcr.io/distroless/static AS final
  
@@ -40,7 +44,7 @@ COPY --from=build --chown=nonroot:nonroot /time /app/bin/time
 COPY --from=build --chown=nonroot:nonroot /hello /app/bin/hello
 
 # Canaries
-COPY --from=build --chown=nonroot:nonroot /canary /bin/sh
+COPY --from=build --chown=nonroot:nonroot /apps/bin/ /bin/
 
 
 

