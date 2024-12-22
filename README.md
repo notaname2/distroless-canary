@@ -46,6 +46,10 @@ To trigger the canary you can run:<br>
 Or another way:<br>
 `sudo docker exec -it <container id> /bin/dash`
 
+What then happens is the canary should trigger with useful info in the `User-Agent` header such as the provident IDENT string, the full command line that someone is attempting to run and the command line of the parent process.  
+
+I could probably figure out how to pull more useful info out of the container to send but that's what I have for the moment. Also note you don't have to use canary tokens for this, you could just customise and send the alert to a SIEM or a webhook.
+
 Have fun.
 
 
